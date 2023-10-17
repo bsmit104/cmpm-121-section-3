@@ -10,6 +10,7 @@ export default class Play extends Phaser.Scene {
   starfield?: Phaser.GameObjects.TileSprite;
   //spinner?: Phaser.Physics.Arcade.Sprite;
   spinner?: Phaser.GameObjects.Shape;
+  purpleman?: Phaser.GameObjects.Shape;
 
   rotationSpeed = Phaser.Math.PI2 / 1000; // radians per millisecond
 
@@ -46,6 +47,20 @@ export default class Play extends Phaser.Scene {
 
     //this.spinner = this.physics.add.sprite(320, 420, 'shrek');
     this.spinner = this.add.rectangle(320, 420, 15, 15, 0xf800d3);
+
+    this.purpleman = this.add.rectangle(0, 0, 100, 20, 0x800080);
+    this.purpleman.setOrigin(0, 0);
+    this.purpleman.y = 0;
+
+    // Add a tween to make the purple rectangle move across the top of the screen
+    this.tweens.add({
+      targets: this.purpleman,
+      x: this.game.config.width as number,
+      duration: 3000, // Adjust the duration as needed
+      repeat: -1, // -1 means it will repeat indefinitely
+      yoyo: true, // It will return to the start position and repeat
+    });
+    
   }
 
   update(_timeMs: number, delta: number) {
@@ -53,18 +68,27 @@ export default class Play extends Phaser.Scene {
 
     if (this.left!.isDown) {
       if (this.spinner) {
-      this.spinner!.rotation -= delta * this.rotationSpeed;
-        //this.spinner.setVelocityX(-250);
+        this.spinner!.rotation -= delta * this.rotationSpeed;
+        this.spinner.x -= delta * .5;
+        if (this.spinner.x < 0) {
+          this.spinner.x = this.game.config.width as number;
+        }
       }
     }
     if (this.right!.isDown) {
       if (this.spinner) {
         this.spinner!.rotation += delta * this.rotationSpeed;
-        //this.spinner.setVelocityX(250);
+        this.spinner.x += delta * .5;
+        if (this.spinner.x > (this.game.config.width as number)) {
+          this.spinner.x = 0;
+        }
       }
     }
 
     if (this.fire!.isDown) {
+      if (this.spinner) {
+        this.spinner.y -= delta * .5;
+      }
       this.tweens.add({
         targets: this.spinner,
         scale: { from: 1.5, to: 1 },
