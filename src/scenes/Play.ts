@@ -60,7 +60,6 @@ export default class Play extends Phaser.Scene {
       repeat: -1, // -1 means it will repeat indefinitely
       yoyo: true, // It will return to the start position and repeat
     });
-    
   }
 
   update(_timeMs: number, delta: number) {
@@ -69,7 +68,7 @@ export default class Play extends Phaser.Scene {
     if (this.left!.isDown) {
       if (this.spinner) {
         this.spinner!.rotation -= delta * this.rotationSpeed;
-        this.spinner.x -= delta * .5;
+        this.spinner.x -= delta * 0.5;
         if (this.spinner.x < 0) {
           this.spinner.x = this.game.config.width as number;
         }
@@ -78,23 +77,31 @@ export default class Play extends Phaser.Scene {
     if (this.right!.isDown) {
       if (this.spinner) {
         this.spinner!.rotation += delta * this.rotationSpeed;
-        this.spinner.x += delta * .5;
+        this.spinner.x += delta * 0.5;
         if (this.spinner.x > (this.game.config.width as number)) {
           this.spinner.x = 0;
         }
       }
     }
 
+    //asked chatgpt
     if (this.fire!.isDown) {
       if (this.spinner) {
-        this.spinner.y -= delta * .5;
+        this.tweens.add({
+          targets: this.spinner,
+          y: 0,
+          duration: 1000,
+          ease: Phaser.Math.Easing.Sine.Out,
+          onComplete: () => {
+            this.tweens.add({
+              targets: this.spinner,
+              y: 420,
+              duration: 1000,
+              ease: Phaser.Math.Easing.Sine.Out,
+            });
+          },
+        });
       }
-      this.tweens.add({
-        targets: this.spinner,
-        scale: { from: 1.5, to: 1 },
-        duration: 300,
-        ease: Phaser.Math.Easing.Sine.Out,
-      });
     }
   }
 }
