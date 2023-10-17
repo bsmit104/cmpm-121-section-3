@@ -8,6 +8,7 @@ export default class Play extends Phaser.Scene {
   right?: Phaser.Input.Keyboard.Key;
 
   starfield?: Phaser.GameObjects.TileSprite;
+  //spinner?: Phaser.Physics.Arcade.Sprite;
   spinner?: Phaser.GameObjects.Shape;
 
   rotationSpeed = Phaser.Math.PI2 / 1000; // radians per millisecond
@@ -18,6 +19,8 @@ export default class Play extends Phaser.Scene {
 
   preload() {
     this.load.image("starfield", starfieldUrl);
+    // this.load.path = "./assets/";
+    // this.load.image('shrek', 'shrek.png');
   }
 
   #addKey(
@@ -41,17 +44,24 @@ export default class Play extends Phaser.Scene {
       )
       .setOrigin(0, 0);
 
-    this.spinner = this.add.rectangle(100, 100, 50, 50, 0xff0000);
+    //this.spinner = this.physics.add.sprite(320, 420, 'shrek');
+    this.spinner = this.add.rectangle(320, 420, 15, 15, 0xf800d3);
   }
 
   update(_timeMs: number, delta: number) {
     this.starfield!.tilePositionX -= 4;
 
     if (this.left!.isDown) {
+      if (this.spinner) {
       this.spinner!.rotation -= delta * this.rotationSpeed;
+        //this.spinner.setVelocityX(-250);
+      }
     }
     if (this.right!.isDown) {
-      this.spinner!.rotation += delta * this.rotationSpeed;
+      if (this.spinner) {
+        this.spinner!.rotation += delta * this.rotationSpeed;
+        //this.spinner.setVelocityX(250);
+      }
     }
 
     if (this.fire!.isDown) {
